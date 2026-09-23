@@ -38,11 +38,15 @@ curl -X POST http://localhost:8000/v1/decide \
 
 | Method | Path | Purpose |
 |---|---|---|
-| `POST` | `/v1/decide` | Main decision endpoint (Jev-compatible) |
-| `POST` | `/v1/systemone` | TypeSafe-compatible alias |
-| `POST` | `/predict` | Legacy alias |
+| `POST` | `/v1/systemone` | Main decision endpoint (TypeSafe + Kev wire-compatible) |
+| `POST` | `/v1/systemone/separate` | One forward pass per question |
+| `POST` | `/v1/systemone/permute` | Option-order robustness for a choice question |
+| `GET` | `/v1/models` | Loaded checkpoint cards |
+| `POST` | `/v1/decide`, `/predict` | Aliases |
 | `POST` | `/route` | Checkpoint routing only |
 | `GET` | `/health` | Health (no auth) |
+
+Responses are `{model, answers, usage, latency_ms}` + `routing` (Laya extra), with an `x-typesafe-request-id` header — same shapes as [jaredpalmer/kev](https://github.com/jaredpalmer/kev).
 
 ### Question types
 

@@ -110,12 +110,17 @@ Send it either way:
 
 | Method | Path | Purpose |
 |---|---|---|
-| `POST` | `/v1/decide` | Main endpoint (Jev-style) |
-| `POST` | `/v1/systemone` | Alias matching TypeSafe's official path — swap base URLs, keep clients |
-| `POST` | `/predict` | Legacy alias, same format |
+| `POST` | `/v1/systemone` | Main endpoint (TypeSafe/Kev wire-compatible) |
+| `POST` | `/v1/systemone/separate` | Each question in its own forward pass |
+| `POST` | `/v1/systemone/permute` | One choice question under `n_perm` option orders |
+| `GET` | `/v1/models` | Model cards for loaded checkpoints |
+| `POST` | `/v1/decide` | Alias of `/v1/systemone` |
+| `POST` | `/predict` | Legacy alias |
 | `POST` | `/route` | Language/checkpoint routing only (no forward pass) |
 | `GET` | `/health` | Liveness + runtime info (no auth) |
 | `GET` | `/docs` | Interactive Swagger UI |
+
+Every response carries an `x-typesafe-request-id` header.
 
 ---
 
@@ -172,7 +177,7 @@ curl -X POST http://localhost:8000/v1/decide \
 
 ## 📬 Response format
 
-Flat Jev envelope `{model, answers, usage}` plus Laya's `routing` block. Latency is in the `X-Latency-Ms` **header** so the body stays wire-compatible with Jev clients.
+Flat TypeSafe envelope `{model, answers, usage, latency_ms}` — identical to Kev — plus Laya's `routing` block (the only extra field; it reports which checkpoint ran and why).
 
 ```jsonc
 {
@@ -195,6 +200,7 @@ Flat Jev envelope `{model, answers, usage}` plus Laya's `routing` block. Latency
     "refund_asked":  { "type": "noul", "noul": 0.84, "confidence": 0.84 }
   },
   "usage": { "input_tokens": 86, "output_tokens": 0 },
+  "latency_ms": 612.4,
   "routing": {
     "model": "english",
     "repo": "convaiinnovations/laya",
@@ -203,6 +209,19 @@ Flat Jev envelope `{model, answers, usage}` plus Laya's `routing` block. Latency
   }
 }
 ```
+
+### Kev parity
+
+Wire-identical to [jaredpalmer/kev](https://github.com/jaredpalmer/kev) on all four endpoints — verified side-by-side:
+
+| Endpoint | Request | Response |
+|---|---|---|
+| `POST /v1/systemone` | `{model, state, questions}` | `{model, answers, usage, latency_ms}` (+ Laya `routing` extra) |
+| `POST /v1/systemone/separate` | same | same (usage/latency summed across per-question passes) |
+| `POST /v1/systemone/permute` | `{request, question, n_perm?}` | `{runs:[{order, probabilities, choice, latency_ms}], argmax_stable, spread}` |
+| `GET /v1/models` | — | `{models:[{name, description, release_date, run, base, lora, device, backend, dtype, temperature, prefix_cache}]}` |
+
+Only intentional differences: Laya requires one of the 3 super keys (Kev is open by default) and adds the `routing` block.
 
 ---
 

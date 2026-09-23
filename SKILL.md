@@ -12,7 +12,8 @@ description: Use when calling a self-hosted Laya System 1 decision API (Jev-comp
 One forward pass → many typed answers. Given a `state` (string / object / array) and a map of `questions`, the API returns per-question answers with probabilities. No chat, no generation — pure typed decisions.
 
 - Base URL (local): `http://localhost:8000`
-- Endpoints: `POST /v1/decide` (primary), `POST /v1/systemone` (TypeSafe alias), `POST /predict` (legacy), `POST /route` (routing only), `GET /health` (no auth), `GET /docs` (Swagger)
+- Endpoints (wire-identical to jaredpalmer/kev): `POST /v1/systemone` (primary), `POST /v1/systemone/separate`, `POST /v1/systemone/permute`, `GET /v1/models`; Laya extras: `POST /v1/decide`, `POST /predict`, `POST /route`, `GET /health` (no auth), `GET /docs` (Swagger)
+- Every response includes an `x-typesafe-request-id` header
 
 ## Auth (mandatory)
 
@@ -53,11 +54,12 @@ Send as `Authorization: Bearer <key>` or `X-API-Key: <key>`. Rotate in `app.py` 
   "model": "laya-latest",
   "answers": { "<id>": { ... } },
   "usage": { "input_tokens": N, "output_tokens": 0 },
+  "latency_ms": 612.4,
   "routing": { "model": "english", "reason": "...", ... }
 }
 ```
 
-Latency is in the `X-Latency-Ms` header (body stays Jev-compatible).
+`latency_ms` sits in the body (same as Kev). `routing` is the only extra field — which checkpoint ran and why.
 
 ## Question types
 

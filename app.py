@@ -4,6 +4,9 @@ os.environ.setdefault("USE_TF", "0")
 os.environ.setdefault("USE_TORCH", "1")
 os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "0")
 
+import itertools
+import random
+import uuid
 from functools import lru_cache
 from time import perf_counter
 from typing import Any
@@ -30,6 +33,8 @@ SUPER_KEYS = {
 AUTO_MODEL_ALIASES = {"laya-latest", "laya", "auto", "jev-latest", "jev", ""}
 CHECKPOINTS = {"english", "multilingual", "typed-decisions"}
 
+LAYA_RELEASE = "2026-01-01"
+
 
 def require_api_key(
     authorization: str | None = Header(default=None, description="Bearer <super-key>"),
@@ -49,6 +54,7 @@ def require_api_key(
         )
     return token
 
+
 torch.set_num_threads(THREADS)
 if hasattr(torch, "set_num_interop_threads"):
     try:
@@ -60,10 +66,11 @@ app = FastAPI(
     title="Laya API",
     description=(
         "Non-autoregressive System 1 decision model (convaiinnovations/laya). "
-        "Jev-compatible request/response format: POST /v1/decide with {model, state, questions} "
-        "returns {model, answers, usage}."
+        "Request/response wire-compatible with TypeSafe System One and jaredpalmer/kev: "
+        "POST /v1/systemone with {model, state, questions} returns "
+        "{model, answers, usage, latency_ms}."
     ),
-    version="2.0.0",
+    version="3.0.0",
 )
 
 
@@ -86,6 +93,12 @@ class RouteRequest(BaseModel):
     questions: dict[str, Any] = Field(default_factory=dict)
 
 
+class PermuteRequest(BaseModel):
+    request: DecideRequest
+    question: str = Field(..., description="Id of one choice question inside request.questions")
+    n_perm: int = Field(default=6, ge=1, le=64, description="Number of option orders to run")
+
+
 @lru_cache(maxsize=1)
 def get_router() -> Router:
     router = Router(preload=PRELOAD, device=DEVICE, max_loaded=MAX_LOADED)
@@ -102,6 +115,10 @@ def _startup() -> None:
     get_router()
 
 
+def _stamp(response: Response) -> None:
+    response.headers["x-typesafe-request-id"] = uuid.uuid4().hex
+
+
 @app.get("/health")
 def health() -> dict[str, Any]:
     return {
@@ -112,73 +129,225 @@ def health() -> dict[str, Any]:
     }
 
 
-def _decide(req: DecideRequest, response: Response) -> dict[str, Any]:
-    router = get_router()
+def _normalize_state(state: Any) -> Any:
+    if isinstance(state, str):
+        return {"body": state}
+    if isinstance(state, list):
+        return {"items": state}
+    return state
 
-    requested = (req.model or "").strip()
+
+def _resolve_model(model: str | None) -> dict[str, Any]:
+    requested = (model or "").strip()
     if requested and requested not in AUTO_MODEL_ALIASES and requested not in CHECKPOINTS:
         raise HTTPException(
             status_code=422,
             detail=f"unknown model '{requested}'; use laya-latest, english, multilingual, or typed-decisions",
         )
-
     kwargs: dict[str, Any] = {}
     if requested in CHECKPOINTS:
         kwargs["model"] = requested
+    effective = requested if requested in CHECKPOINTS else "laya-latest"
+    return {"kwargs": kwargs, "effective": effective}
 
-    # laya expects a mapping; Jev allows a bare string/array state
-    state: Any = req.state
-    if isinstance(state, str):
-        state = {"body": state}
-    elif isinstance(state, list):
-        state = {"items": state}
 
+def _run_predict(state: Any, questions: dict[str, Any], kwargs: dict[str, Any]) -> tuple[dict[str, Any], float]:
+    router = get_router()
     t0 = perf_counter()
     try:
-        result = router.predict(state, req.questions, **kwargs)
+        result = router.predict(state, questions, **kwargs)
     except Exception as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    # latency lives in a header so the body stays Jev-compatible
-    response.headers["X-Latency-Ms"] = f"{(perf_counter() - t0) * 1000:.1f}"
+    return result, (perf_counter() - t0) * 1000
 
-    effective = requested if requested in CHECKPOINTS else "laya-latest"
 
-    # Jev-compatible envelope: {model, answers, usage} + routing (Laya extra)
+def _envelope(effective: str, answers: dict[str, Any], usage: dict[str, Any], latency_ms: float,
+              routing: dict[str, Any] | None = None) -> dict[str, Any]:
     payload: dict[str, Any] = {
         "model": effective,
-        "answers": result.get("answers", {}),
-        "usage": result.get("usage", {}),
+        "answers": answers,
+        "usage": usage,
+        "latency_ms": round(latency_ms, 1),
     }
-    if "routing" in result:
-        payload["routing"] = result["routing"]
+    if routing:
+        payload["routing"] = routing
     return payload
 
 
+def _decide(req: DecideRequest, response: Response) -> dict[str, Any]:
+    _stamp(response)
+    plan = _resolve_model(req.model)
+    state = _normalize_state(req.state)
+    result, latency_ms = _run_predict(state, req.questions, plan["kwargs"])
+    return _envelope(
+        plan["effective"],
+        result.get("answers", {}),
+        result.get("usage", {}),
+        latency_ms,
+        result.get("routing"),
+    )
+
+
+@app.post("/v1/systemone", dependencies=[Depends(require_api_key)])
+def systemone(req: DecideRequest, response: Response) -> dict[str, Any]:
+    return _decide(req, response)
+
+
+@app.post("/v1/systemone/separate", dependencies=[Depends(require_api_key)])
+def systemone_separate(req: DecideRequest, response: Response) -> dict[str, Any]:
+    _stamp(response)
+    plan = _resolve_model(req.model)
+    state = _normalize_state(req.state)
+
+    merged: dict[str, Any] = {}
+    usage = {"input_tokens": 0, "output_tokens": 0}
+    total_ms = 0.0
+    for qid, question in req.questions.items():
+        result, ms = _run_predict(state, {qid: question}, plan["kwargs"])
+        merged.update(result.get("answers", {}))
+        u = result.get("usage", {}) or {}
+        usage["input_tokens"] += int(u.get("input_tokens", 0) or 0)
+        usage["output_tokens"] += int(u.get("output_tokens", 0) or 0)
+        total_ms += ms
+
+    routing = None
+    try:
+        route_decision = get_router().route(state, {})
+        routing = {
+            "model": getattr(route_decision, "model", None),
+            "repo": getattr(route_decision, "repo", None),
+            "reason": getattr(route_decision, "reason", None),
+        }
+    except Exception:
+        pass
+    return _envelope(plan["effective"], merged, usage, total_ms, routing)
+
+
+def _choice_orders(options: list[str], n_perm: int) -> list[list[str]]:
+    if len(options) <= 8:
+        all_perms = list(itertools.permutations(options))
+        if n_perm >= len(all_perms):
+            orders = [list(p) for p in all_perms]
+            random.shuffle(orders)
+            return orders[:n_perm] if n_perm < len(orders) else orders
+        return [list(p) for p in random.sample(all_perms, n_perm)]
+    orders: list[list[str]] = []
+    seen: set[tuple[str, ...]] = set()
+    attempts = 0
+    while len(orders) < n_perm and attempts < n_perm * 20:
+        candidate = options.copy()
+        random.shuffle(candidate)
+        key = tuple(candidate)
+        attempts += 1
+        if key not in seen or attempts > n_perm * 10:
+            seen.add(key)
+            orders.append(candidate)
+    return orders
+
+
+@app.post("/v1/systemone/permute", dependencies=[Depends(require_api_key)])
+def systemone_permute(req: PermuteRequest, response: Response) -> dict[str, Any]:
+    _stamp(response)
+    inner = req.request
+    if req.question not in inner.questions:
+        raise HTTPException(status_code=422, detail=f"question '{req.question}' not found in request.questions")
+    question = inner.questions[req.question]
+    if not isinstance(question, dict) or question.get("type") != "choice":
+        raise HTTPException(status_code=422, detail="permute only supports a choice-type question")
+    criteria = question.get("criteria") or {}
+    if not isinstance(criteria, dict) or len(criteria) < 2:
+        raise HTTPException(status_code=422, detail="choice criteria must be a dict with >= 2 options")
+
+    plan = _resolve_model(inner.model)
+    state = _normalize_state(inner.state)
+    options = list(criteria.keys())
+    orders = _choice_orders(options, max(1, min(req.n_perm, 64)))
+    if not orders:
+        raise HTTPException(status_code=422, detail="could not generate option orders")
+
+    runs: list[dict[str, Any]] = []
+    per_option: dict[str, list[float]] = {opt: [] for opt in options}
+    choices_seen: list[str] = []
+    for order in orders:
+        shuffled_criteria = {opt: criteria[opt] for opt in order}
+        permuted_question = {**question, "criteria": shuffled_criteria}
+        result, ms = _run_predict(state, {req.question: permuted_question}, plan["kwargs"])
+        answer = (result.get("answers") or {}).get(req.question, {})
+        probabilities = answer.get("probabilities") or {}
+        choice = answer.get("choice")
+        runs.append(
+            {
+                "order": order,
+                "probabilities": probabilities,
+                "choice": choice,
+                "latency_ms": round(ms, 1),
+            }
+        )
+        choices_seen.append(choice)
+        for opt in options:
+            per_option[opt].append(float(probabilities.get(opt, 0.0)))
+
+    spread = {opt: round(max(vals) - min(vals), 6) for opt, vals in per_option.items() if vals}
+    return {
+        "runs": runs,
+        "argmax_stable": len(set(choices_seen)) == 1,
+        "spread": spread,
+    }
+
+
+def _model_entry(name: str, description: str, run: str) -> dict[str, Any]:
+    return {
+        "name": name,
+        "description": description,
+        "release_date": LAYA_RELEASE,
+        "run": run,
+        "base": "ModernBERT-large",
+        "lora": None,
+        "device": DEVICE,
+        "backend": "torch",
+        "dtype": "float32" if DEVICE == "cpu" else "bfloat16",
+        "temperature": None,
+        "prefix_cache": None,
+    }
+
+
+@app.get("/v1/models", dependencies=[Depends(require_api_key)])
+def models(response: Response) -> dict[str, Any]:
+    _stamp(response)
+    entries = [
+        _model_entry(
+            "laya-latest",
+            "convaiinnovations/laya with automatic per-request checkpoint routing",
+            "convaiinnovations/laya",
+        )
+    ]
+    for ckpt in sorted(CHECKPOINTS):
+        entries.append(
+            _model_entry(
+                ckpt,
+                f"pinned checkpoint '{ckpt}' of convaiinnovations/laya",
+                f"convaiinnovations/laya:{ckpt}",
+            )
+        )
+    return {"models": entries}
+
+
+# Laya-only extras (Kev parity endpoints are above)
 @app.post("/v1/decide", dependencies=[Depends(require_api_key)])
 def decide_v1(req: DecideRequest, response: Response) -> dict[str, Any]:
     return _decide(req, response)
 
 
-# alias: official TypeSafe path shape, for drop-in client swaps
-@app.post("/v1/systemone", dependencies=[Depends(require_api_key)])
-def decide_systemone(req: DecideRequest, response: Response) -> dict[str, Any]:
-    return _decide(req, response)
-
-
-# legacy alias
 @app.post("/predict", dependencies=[Depends(require_api_key)])
 def predict(req: DecideRequest, response: Response) -> dict[str, Any]:
     return _decide(req, response)
 
 
 @app.post("/route", dependencies=[Depends(require_api_key)])
-def route(req: RouteRequest) -> dict[str, Any]:
+def route(req: RouteRequest, response: Response) -> dict[str, Any]:
+    _stamp(response)
+    state = _normalize_state(req.state)
     router = get_router()
-    state: Any = req.state
-    if isinstance(state, str):
-        state = {"body": state}
-    elif isinstance(state, list):
-        state = {"items": state}
     try:
         decision = router.route(state, req.questions)
     except Exception as exc:
