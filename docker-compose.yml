@@ -1,0 +1,32 @@
+services:
+  laya-api:
+    build: .
+    image: laya-api:latest
+    container_name: laya-api
+    ports:
+      - "8000:8000"
+    environment:
+      - LAYA_DEVICE=cpu
+      - LAYA_PRELOAD=1        # keep checkpoints in RAM: 193-464ms CPU vs 7-10s reload
+      - LAYA_MAX_LOADED=2     # english + multilingual both hot
+      - OMP_NUM_THREADS=8     # match physical cores; oversubscription slows inference
+      - MKL_NUM_THREADS=8
+      - TORCH_NUM_THREADS=8
+      - USE_TF=0
+      - HF_HOME=/cache/huggingface
+    volumes:
+      - laya-cache:/cache      # model weights persist across rebuilds
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 8g
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 180s
+
+volumes:
+  laya-cache:
