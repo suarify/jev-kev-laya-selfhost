@@ -2,6 +2,8 @@
 
 Side-by-side curl-style test suite: same inputs → both servers → agreement report.
 
+📊 **Latest full-run results → [REPORT.md](./REPORT.md)** (8/8 structure, 6/8 choice, 7/8 score, 12/16 noul)
+
 ## Cases
 
 8 cases, 2 per language, each exercising `choice` + `noul` + `score` questions:
