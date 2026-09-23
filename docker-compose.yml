@@ -8,7 +8,7 @@ services:
     environment:
       - LAYA_DEVICE=cpu
       - LAYA_PRELOAD=1        # keep checkpoints in RAM: 193-464ms CPU vs 7-10s reload
-      - LAYA_MAX_LOADED=2     # english + multilingual both hot
+      - LAYA_MAX_LOADED=3     # english + multilingual + typed-decisions all hot
       - OMP_NUM_THREADS=8     # match physical cores; oversubscription slows inference
       - MKL_NUM_THREADS=8
       - TORCH_NUM_THREADS=8

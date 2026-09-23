@@ -1,0 +1,312 @@
+{
+ "results": [
+  {
+   "id": "en-support-mixed",
+   "systems": {
+    "laya": {
+     "ok": true,
+     "lat_ms": 28709.1,
+     "wall_ms": 29353.073600010248,
+     "tokens": 277,
+     "answers": {
+      "department": {
+       "type": "choice",
+       "choice": "returns",
+       "probabilities": {
+        "returns": 0.4727,
+        "shipping": 0.3189,
+        "billing": 0.2084
+       },
+       "confidence": 0.0483,
+       "action": {
+        "act_probability": 1.0
+       }
+      },
+      "escalate": {
+       "type": "noul",
+       "noul": 0.734,
+       "confidence": 0.734,
+       "action": {
+        "act_probability": 1.0
+       }
+      },
+      "threat": {
+       "type": "noul",
+       "noul": 0.2642,
+       "confidence": 0.7358,
+       "action": {
+        "act_probability": 1.0
+       }
+      },
+      "frustration": {
+       "type": "score",
+       "score": 1.3529,
+       "legend": {
+        "0": "Calm",
+        "1": "Frustrated",
+        "2": "Very angry"
+       },
+       "probabilities": {
+        "0": 0.0053,
+        "1": 0.6364,
+        "2": 0.3583
+       },
+       "confidence": 0.378,
+       "action": {
+        "act_probability": 1.0
+       }
+      }
+     },
+     "routing": "english"
+    },
+    "kev": {
+     "ok": true,
+     "lat_ms": 33210.8,
+     "wall_ms": 33814.5411000005,
+     "tokens": 126,
+     "answers": {
+      "department": {
+       "type": "choice",
+       "choice": "billing",
+       "confidence": 0.2667,
+       "probabilities": {
+        "returns": 0.3633,
+        "shipping": 0.1255,
+        "billing": 0.5111
+       }
+      },
+      "escalate": {
+       "type": "noul",
+       "noul": 0.643
+      },
+      "threat": {
+       "type": "noul",
+       "noul": 0.0223
+      },
+      "frustration": {
+       "type": "score",
+       "score": 1.0354,
+       "legend": {
+        "0": "Calm",
+        "1": "Frustrated",
+        "2": "Very angry"
+       },
+       "probabilities": {
+        "0": 0.005,
+        "1": 0.9546,
+        "2": 0.0404
+       },
+       "confidence": 0.9773
+      }
+     }
+    },
+    "system-one": {
+     "ok": true,
+     "lat_ms": 258.7,
+     "wall_ms": 1514.939199987566,
+     "tokens": null,
+     "answers": {
+      "department": {
+       "id": "department",
+       "type": "choice",
+       "choice": "returns",
+       "probabilities": {
+        "returns": 0.8512886166572571,
+        "shipping": 0.13938288390636444,
+        "billing": 0.009328511543571949
+       },
+       "confidence": 0.7119057327508926
+      },
+      "escalate": {
+       "id": "escalate",
+       "type": "noul",
+       "noul": 0.9126211404800415,
+       "confidence": 0.825242280960083
+      },
+      "threat": {
+       "id": "threat",
+       "type": "noul",
+       "noul": 0.0005126583855599165,
+       "confidence": 0.9989746224600822
+      },
+      "frustration": {
+       "id": "frustration",
+       "type": "score",
+       "score": 1.0325044989585876,
+       "level": "1",
+       "probabilities": {
+        "0": 0.13374683260917664,
+        "1": 0.7000017762184143,
+        "2": 0.16625136137008667
+       },
+       "confidence": 0.5337504148483276
+      }
+     },
+     "model": "e2b-full",
+     "cost_gpu": 5.748888888888889e-05
+    }
+   }
+  },
+  {
+   "id": "en-inbox-triage",
+   "systems": {
+    "laya": {
+     "ok": true,
+     "lat_ms": 17491.1,
+     "wall_ms": 18870.44749999768,
+     "tokens": 284,
+     "answers": {
+      "label": {
+       "type": "choice",
+       "choice": "follow_up",
+       "probabilities": {
+        "follow_up": 0.7918,
+        "sales": 0.1619,
+        "spam": 0.0463
+       },
+       "confidence": 0.4339,
+       "action": {
+        "act_probability": 1.0
+       }
+      },
+      "priority": {
+       "type": "score",
+       "score": 0.8623,
+       "legend": {
+        "0": "low - reply this week",
+        "1": "normal - reply in 1-2 days",
+        "2": "high - reply today"
+       },
+       "probabilities": {
+        "0": 0.2891,
+        "1": 0.5594,
+        "2": 0.1515
+       },
+       "confidence": 0.1174,
+       "action": {
+        "act_probability": 1.0
+       }
+      },
+      "is_cold_lead": {
+       "type": "noul",
+       "noul": 0.0902,
+       "confidence": 0.9098,
+       "action": {
+        "act_probability": 1.0
+       }
+      },
+      "needs_tiny_reply": {
+       "type": "noul",
+       "noul": 0.2782,
+       "confidence": 0.7218,
+       "action": {
+        "act_probability": 1.0
+       }
+      }
+     },
+     "routing": "english"
+    },
+    "kev": {
+     "ok": true,
+     "lat_ms": 4003.9,
+     "wall_ms": 14354.233399993973,
+     "tokens": 125,
+     "answers": {
+      "label": {
+       "type": "choice",
+       "choice": "follow_up",
+       "confidence": 0.8787,
+       "probabilities": {
+        "follow_up": 0.9191,
+        "sales": 0.0799,
+        "spam": 0.0009
+       }
+      },
+      "priority": {
+       "type": "score",
+       "score": 1.0703,
+       "legend": {
+        "0": "low - reply this week",
+        "1": "normal - reply in 1-2 days",
+        "2": "high - reply today"
+       },
+       "probabilities": {
+        "0": 0.2449,
+        "1": 0.4399,
+        "2": 0.3152
+       },
+       "confidence": 0.72
+      },
+      "is_cold_lead": {
+       "type": "noul",
+       "noul": 0.2238
+      },
+      "needs_tiny_reply": {
+       "type": "noul",
+       "noul": 0.7042
+      }
+     }
+    },
+    "system-one": {
+     "ok": true,
+     "lat_ms": 98.4,
+     "wall_ms": 995.6937999813817,
+     "tokens": null,
+     "answers": {
+      "label": {
+       "id": "label",
+       "type": "choice",
+       "choice": "follow_up",
+       "probabilities": {
+        "follow_up": 0.9987371563911438,
+        "sales": 0.0012266980484127998,
+        "spam": 3.6168443330097944e-05
+       },
+       "confidence": 0.997510458342731
+      },
+      "priority": {
+       "id": "priority",
+       "type": "score",
+       "score": 0.5258188471198082,
+       "level": "0",
+       "probabilities": {
+        "0": 0.5360339879989624,
+        "1": 0.4021131098270416,
+        "2": 0.061852868646383286
+       },
+       "confidence": 0.13392087817192078
+      },
+      "is_cold_lead": {
+       "id": "is_cold_lead",
+       "type": "noul",
+       "noul": 0.00722609693184495,
+       "confidence": 0.9855477935634553
+      },
+      "needs_tiny_reply": {
+       "id": "needs_tiny_reply",
+       "type": "noul",
+       "noul": 0.8687946200370789,
+       "confidence": 0.7375892251729965
+      }
+     },
+     "model": "e2b-full",
+     "cost_gpu": 2.186666666666667e-05
+    }
+   }
+  }
+ ],
+ "agreement": {
+  "choice_all3": [
+   1,
+   2
+  ],
+  "noul_close3": [
+   3,
+   4
+  ],
+  "score_close3": [
+   1,
+   2
+  ]
+ }
+}
