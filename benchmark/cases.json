@@ -1,0 +1,194 @@
+[
+  {
+    "id": "en-support-mixed",
+    "lang": "en",
+    "title": "Support ticket - mixed delivery + billing complaint",
+    "state": "Shoes arrived two weeks late and in the wrong size. Also I see two charges on my card. I want this fixed today.",
+    "questions": {
+      "department": {
+        "type": "choice",
+        "instructions": "Which team should handle this?",
+        "criteria": {
+          "returns": "Exchanges, refunds, wrong or damaged items",
+          "shipping": "Delivery status, delays, lost packages",
+          "billing": "Charges, invoices, payment problems"
+        }
+      },
+      "escalate": { "type": "noul", "instructions": "Does this need urgent human attention?" },
+      "threat": { "type": "noul", "instructions": "Does the customer threaten legal action or public shaming?" },
+      "frustration": {
+        "type": "score",
+        "instructions": "How frustrated is the customer?",
+        "criteria": ["Calm", "Frustrated", "Very angry"]
+      }
+    }
+  },
+  {
+    "id": "en-inbox-triage",
+    "lang": "en",
+    "title": "Inbox triage - polite follow-up on a proposal",
+    "state": "Hi team, just checking if you received my proposal from last Tuesday? No rush, but the client keeps asking me for an update. Thanks!",
+    "questions": {
+      "label": {
+        "type": "choice",
+        "instructions": "Categorize this email",
+        "criteria": {
+          "follow_up": "Checking on something sent earlier",
+          "sales": "New business or proposals",
+          "spam": "Unsolicited or irrelevant"
+        }
+      },
+      "priority": {
+        "type": "score",
+        "instructions": "Reply priority",
+        "criteria": ["low - reply this week", "normal - reply in 1-2 days", "high - reply today"]
+      },
+      "is_cold_lead": { "type": "noul", "instructions": "Is this a cold or unresponsive lead?" },
+      "needs_tiny_reply": { "type": "noul", "instructions": "Would a one-sentence reply be enough?" }
+    }
+  },
+  {
+    "id": "zh-support-refund",
+    "lang": "zh",
+    "title": "Support - refund + duplicate charge (Simplified Chinese)",
+    "state": "我两周前下的订单到现在还没收到，而且信用卡被扣了两次款。我要马上退款，不然我就去消费者协会投诉你们。",
+    "questions": {
+      "department": {
+        "type": "choice",
+        "instructions": "哪个团队应该处理这个问题？",
+        "criteria": {
+          "returns": "换货、退款、商品损坏或发错",
+          "shipping": "配送状态、延迟、丢件",
+          "billing": "扣款、账单、支付问题"
+        }
+      },
+      "escalate": { "type": "noul", "instructions": "这个问题需要紧急人工处理吗？" },
+      "threat": { "type": "noul", "instructions": "客户是否威胁采取法律行动或公开曝光？" },
+      "frustration": {
+        "type": "score",
+        "instructions": "客户有多生气？",
+        "criteria": ["平静", "不满", "非常愤怒"]
+      }
+    }
+  },
+  {
+    "id": "zh-content-moderation",
+    "lang": "zh",
+    "title": "Content moderation - abusive chat message (Simplified Chinese)",
+    "state": "你们这个破平台就是骗钱的！客服都是机器人，垃圾东西，我已经截图发到微博上了，等着吧。",
+    "questions": {
+      "toxic": { "type": "noul", "instructions": "这条消息是否包含辱骂或攻击性内容？" },
+      "public_shaming_risk": { "type": "noul", "instructions": "发送者是否威胁要公开曝光平台？" },
+      "severity": {
+        "type": "score",
+        "instructions": "情况有多严重？",
+        "criteria": ["一般", "需要关注", "严重 - 需要主管介入"]
+      },
+      "action": {
+        "type": "choice",
+        "instructions": "客服应该先做什么？",
+        "criteria": {
+          "calm_reply": "冷静回复，安抚情绪",
+          "escalate_manager": "立即转给主管处理",
+          "legal_review": "转给法务/合规团队"
+        }
+      }
+    }
+  },
+  {
+    "id": "ms-support-delivery",
+    "lang": "ms",
+    "title": "Support - late delivery + double charge (Bahasa Malaysia)",
+    "state": "Saya dah tunggu dua minggu tapi pesanan masih tak sampai. Sekarang kad saya kena caj dua kali. Saya nak refund segera atau saya buat aduan ke Kementerian Perdagangan Dalam Negeri.",
+    "questions": {
+      "department": {
+        "type": "choice",
+        "instructions": "Pasukan mana yang patut uruskan kes ini?",
+        "criteria": {
+          "returns": "Pulangan, refund, barang rosak atau salah",
+          "shipping": "Status penghantaran, kelewatan, barang hilang",
+          "billing": "Caj, invois, masalah pembayaran"
+        }
+      },
+      "escalate": { "type": "noul", "instructions": "Perlu perhatian manusia segera?" },
+      "threat": { "type": "noul", "instructions": "Adakah pelanggan mengancam untuk membuat aduan rasmi atau undang-undang?" },
+      "frustration": {
+        "type": "score",
+        "instructions": "Seberapa kecewa pelanggan ini?",
+        "criteria": ["Tenang", "Kecewa", "Sangat marah"]
+      }
+    }
+  },
+  {
+    "id": "ms-whatsapp-appointment",
+    "lang": "ms",
+    "title": "WhatsApp triage - clinic appointment request (Bahasa Malaysia)",
+    "state": "Assalamualaikum, saya nak tanya boleh ke temujanji klinik gigi esok pukul 3 diganti ke pagi? Sebab saya baru dapat notis kerja. Terima kasih.",
+    "questions": {
+      "intent": {
+        "type": "choice",
+        "instructions": "Apakah maksud mesej ini?",
+        "criteria": {
+          "reschedule": "Tukar masa atau tarikh temujanji",
+          "cancel": "Batalkan temujanji",
+          "new_booking": "Buat tempahan baru"
+        }
+      },
+      "is_urgent": { "type": "noul", "instructions": "Adakah ini keperluan segera (kesakitan / kecemasan)?" },
+      "reply_today": { "type": "noul", "instructions": "Perlukah balas pada hari yang sama?" },
+      "politeness": {
+        "type": "score",
+        "instructions": "Seberapa sopan nada mesej ini?",
+        "criteria": ["Kasar", "Biasa", "Sangat sopan"]
+      }
+    }
+  },
+  {
+    "id": "ta-support-refund",
+    "lang": "ta",
+    "title": "Support - refund + late delivery (Tamil)",
+    "state": "என் ஆர்டர் இரண்டு வாரமாக வரவில்லை, மேலும் என் கார்டில் இருமுறை பணம் பிடிக்கப்பட்டுள்ளது. உடனே பணத்தை திரும்ப தர வேண்டும், இல்லையெனில் நுகர்வோர் குறைதீர்ப்பு குழுவில் புகார் அளிப்பேன்.",
+    "questions": {
+      "department": {
+        "type": "choice",
+        "instructions": "இந்த பிரச்சனையை எந்த குழு கையாள வேண்டும்?",
+        "criteria": {
+          "returns": "மாற்றம், பணம் திரும்ப, தவறான அல்லது சேதமான பொருள்",
+          "shipping": "டெலிவரி நிலை, தாமதம், பொருள் தொலைதல்",
+          "billing": "கட்டணம், பில், பணம் செலுத்தல் பிரச்சனை"
+        }
+      },
+      "escalate": { "type": "noul", "instructions": "இதற்கு உடனடி மனித கவனம் தேவையா?" },
+      "threat": { "type": "noul", "instructions": "வாடிக்கையாளர் சட்ட நடவடிக்கை அல்லது பொது வெளியிடலை மிரட்டுகிறாரா?" },
+      "frustration": {
+        "type": "score",
+        "instructions": "வாடிக்கையாளர் எவ்வளவு கோபமாக இருக்கிறார்?",
+        "criteria": ["அமைதி", "அதிருப்தி", "மிகவும் கோபம்"]
+      }
+    }
+  },
+  {
+    "id": "ta-booking-triage",
+    "lang": "ta",
+    "title": "Booking triage - train ticket change request (Tamil)",
+    "state": "வணக்கம், நாளை சென்னை - மதுரை ரயில் டிக்கெட்டை ஒரு நாள் பின்னாக மாற்ற வேண்டும். அவசரம் இல்லை, எப்போது வேண்டுமானாலும் செய்யலாம்.",
+    "questions": {
+      "intent": {
+        "type": "choice",
+        "instructions": "இந்த செய்தியின் நோக்கம் என்ன?",
+        "criteria": {
+          "reschedule": "பயண தேதியை மாற்று",
+          "cancel": "டிக்கெட்டை ரத்து செய்யு",
+          "refund_request": "பணம் திரும்ப கேட்கு"
+        }
+      },
+      "is_urgent": { "type": "noul", "instructions": "இது உடனடி தேவையா?" },
+      "reply_today": { "type": "noul", "instructions": "இன்றே பதில் அளிக்க வேண்டுமா?" },
+      "complexity": {
+        "type": "score",
+        "instructions": "இந்த கோரிக்கை எவ்வளவு சிக்கலானது?",
+        "criteria": ["எளிது", "சாதாரணம்", "சிக்கலானது"]
+      }
+    }
+  }
+]
