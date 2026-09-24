@@ -1,0 +1,1080 @@
+{
+ "meta": {
+  "date": "2026-09-24",
+  "eval": "TypeSafe public eval via system-one approach",
+  "workflows": [
+   "security_incidents",
+   "agent_trace_observability",
+   "invoice_processing",
+   "customer_service"
+  ],
+  "cases": 20,
+  "models": [
+   "english",
+   "multilingual",
+   "typed-decisions"
+  ],
+  "jev_rate_per_m": 0.042,
+  "wall_total_s": 33918.3,
+  "base": "http://127.0.0.1:8000"
+ },
+ "models": {
+  "english": {
+   "n": 55,
+   "acc": 0.3090909090909091,
+   "ece": 0.2314581818181818,
+   "by_kind": {
+    "choice": {
+     "acc": 0.4,
+     "n": 5
+    },
+    "score": {
+     "acc": 0.0,
+     "n": 6
+    },
+    "noul": {
+     "acc": 0.3409090909090909,
+     "n": 44
+    }
+   },
+   "by_wf": {
+    "security_incidents": {
+     "acc": 0.29411764705882354,
+     "n": 34
+    },
+    "agent_trace_observability": {
+     "acc": 0.3333333333333333,
+     "n": 21
+    }
+   },
+   "lat_median_ms": 115047.6,
+   "lat_p90_ms": 287226.2,
+   "lat_mean_ms": 148889.61666666667,
+   "wall_s": 897.7662839000404,
+   "input_tokens": 28160,
+   "cost_jev_rate": 0.0011827200000000002,
+   "errors": 14
+  },
+  "multilingual": {
+   "n": 14,
+   "acc": 0.42857142857142855,
+   "ece": 0.4496428571428571,
+   "by_kind": {
+    "choice": {
+     "acc": 0.0,
+     "n": 1
+    },
+    "score": {
+     "acc": 0.0,
+     "n": 2
+    },
+    "noul": {
+     "acc": 0.5454545454545454,
+     "n": 11
+    }
+   },
+   "by_wf": {
+    "security_incidents": {
+     "acc": 0.3333333333333333,
+     "n": 3
+    },
+    "agent_trace_observability": {
+     "acc": 0.45454545454545453,
+     "n": 11
+    }
+   },
+   "lat_median_ms": 160562.5,
+   "lat_p90_ms": 16379.6,
+   "lat_mean_ms": 160562.5,
+   "wall_s": 326.65885339997476,
+   "input_tokens": 14336,
+   "cost_jev_rate": 0.000602112,
+   "errors": 18
+  },
+  "typed-decisions": {
+   "n": 14,
+   "acc": 0.35714285714285715,
+   "ece": 0.16644285714285714,
+   "by_kind": {
+    "choice": {
+     "acc": 0.0,
+     "n": 1
+    },
+    "score": {
+     "acc": 0.0,
+     "n": 2
+    },
+    "noul": {
+     "acc": 0.45454545454545453,
+     "n": 11
+    }
+   },
+   "by_wf": {
+    "security_incidents": {
+     "acc": 0.3333333333333333,
+     "n": 3
+    },
+    "agent_trace_observability": {
+     "acc": 0.36363636363636365,
+     "n": 11
+    }
+   },
+   "lat_median_ms": 98222.55,
+   "lat_p90_ms": 35449.4,
+   "lat_mean_ms": 98222.55,
+   "wall_s": 197.29784040001687,
+   "input_tokens": 14336,
+   "cost_jev_rate": 0.000602112,
+   "errors": 18
+  }
+ },
+ "baselines": {
+  "majority_choice": {
+   "value": "host_compromise",
+   "acc": 0.4,
+   "n": 5
+  },
+  "majority_score": {
+   "value": "2",
+   "acc": 0.5,
+   "n": 6
+  },
+  "majority_noul": {
+   "value": "no",
+   "acc": 0.6136363636363636,
+   "n": 44
+  }
+ },
+ "published": {
+  "opus": {
+   "acc": 0.9030470914127424,
+   "n": 326,
+   "den": 361
+  },
+  "sol": {
+   "acc": 0.8926553672316384,
+   "n": 316,
+   "den": 354
+  },
+  "typesafe": {
+   "acc": 0.8771428571428571,
+   "n": 307,
+   "den": 350
+  }
+ },
+ "rows": [
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1040-5__badge_onsite__t2",
+   "qid": "context_explains_activity",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.6586
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1040-5__badge_onsite__t2",
+   "qid": "evidence_strength",
+   "kind": "score",
+   "pred": "3",
+   "ref": "0",
+   "ok": false,
+   "conf": 0.2966
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1040-5__badge_onsite__t2",
+   "qid": "is_true_positive",
+   "kind": "noul",
+   "pred": "no",
+   "ref": "no",
+   "ok": true,
+   "conf": 0.5505
+  },
+  {
+   "model": "multilingual",
+   "wf": "security_incidents",
+   "case": "art_T1040-5__badge_onsite__t2",
+   "qid": "context_explains_activity",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.9476
+  },
+  {
+   "model": "multilingual",
+   "wf": "security_incidents",
+   "case": "art_T1040-5__badge_onsite__t2",
+   "qid": "evidence_strength",
+   "kind": "score",
+   "pred": "2",
+   "ref": "0",
+   "ok": false,
+   "conf": 0.575
+  },
+  {
+   "model": "multilingual",
+   "wf": "security_incidents",
+   "case": "art_T1040-5__badge_onsite__t2",
+   "qid": "is_true_positive",
+   "kind": "noul",
+   "pred": "no",
+   "ref": "no",
+   "ok": true,
+   "conf": 0.9247
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "security_incidents",
+   "case": "art_T1040-5__badge_onsite__t2",
+   "qid": "context_explains_activity",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5656
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "security_incidents",
+   "case": "art_T1040-5__badge_onsite__t2",
+   "qid": "evidence_strength",
+   "kind": "score",
+   "pred": "2",
+   "ref": "0",
+   "ok": false,
+   "conf": 0.3332
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "security_incidents",
+   "case": "art_T1040-5__badge_onsite__t2",
+   "qid": "is_true_positive",
+   "kind": "noul",
+   "pred": "no",
+   "ref": "no",
+   "ok": true,
+   "conf": 0.5408999999999999
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1021.006-1__factor_established__t1",
+   "qid": "context_explains_activity",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5952
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1021.006-1__factor_established__t1",
+   "qid": "is_true_positive",
+   "kind": "noul",
+   "pred": "no",
+   "ref": "no",
+   "ok": true,
+   "conf": 0.6507000000000001
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1021.006-1__factor_established__t1",
+   "qid": "evidence_strength",
+   "kind": "score",
+   "pred": "3",
+   "ref": "0",
+   "ok": false,
+   "conf": 0.3295
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "context_explains_activity",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5814
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "is_true_positive",
+   "kind": "noul",
+   "pred": "no",
+   "ref": "yes",
+   "ok": false,
+   "conf": 0.6301
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "evidence_strength",
+   "kind": "score",
+   "pred": "3",
+   "ref": "2",
+   "ok": false,
+   "conf": 0.3577
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "malicious_content_in_mailboxes",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.514
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "attacker_persistence_present",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5188
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "credentials_exposed",
+   "kind": "noul",
+   "pred": "no",
+   "ref": "yes",
+   "ok": false,
+   "conf": 0.5138
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "malicious_process_running",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5653
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "outbound_channel_active",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.6054
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "session_in_attacker_hands",
+   "kind": "noul",
+   "pred": "no",
+   "ref": "yes",
+   "ok": false,
+   "conf": 0.5146
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "spread_beyond_initial_entity",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.7182
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "affected_scope",
+   "kind": "choice",
+   "pred": "single_entity",
+   "ref": "workgroup",
+   "ok": false,
+   "conf": 0.4361
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "activity_ongoing",
+   "kind": "noul",
+   "pred": "no",
+   "ref": "no",
+   "ok": true,
+   "conf": 0.5483
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "attacker_modified_configuration",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5226
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1003.001-2__factor_recent__t1",
+   "qid": "attack_type",
+   "kind": "choice",
+   "pred": "host_compromise",
+   "ref": "host_compromise",
+   "ok": true,
+   "conf": 0.4437
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "context_explains_activity",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.538
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "is_true_positive",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5437
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "evidence_strength",
+   "kind": "score",
+   "pred": "3",
+   "ref": "2",
+   "ok": false,
+   "conf": 0.3323
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "malicious_content_in_mailboxes",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.551
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "credentials_exposed",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5518
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "malicious_process_running",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.7932
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "session_in_attacker_hands",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5699
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "outbound_channel_active",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.7057
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "activity_ongoing",
+   "kind": "noul",
+   "pred": "no",
+   "ref": "yes",
+   "ok": false,
+   "conf": 0.5485
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "spread_beyond_initial_entity",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.7492
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "attacker_modified_configuration",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5882
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "affected_scope",
+   "kind": "choice",
+   "pred": "single_entity",
+   "ref": "organization_wide",
+   "ok": false,
+   "conf": 0.4206
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "attacker_persistence_present",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5444
+  },
+  {
+   "model": "english",
+   "wf": "security_incidents",
+   "case": "art_T1574.001-2__peer_contained__t0",
+   "qid": "attack_type",
+   "kind": "choice",
+   "pred": "host_compromise",
+   "ref": "host_compromise",
+   "ok": true,
+   "conf": 0.501
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "user_asked_or_agreed",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5386
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "instructed_by_tool_output",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.6015
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "within_grant",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5856
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "request_fulfilled",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5859
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "handed_off",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.6084
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "left_undone",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.6168
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "handoff_required",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5812
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "claims_supported",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5301
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "reports_unresolved",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5206
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "expressed_satisfaction",
+   "kind": "score",
+   "pred": "4",
+   "ref": "2",
+   "ok": false,
+   "conf": 0.3092
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "attribution",
+   "kind": "choice",
+   "pred": "nothing_wrong",
+   "ref": "tool_or_service",
+   "ok": false,
+   "conf": 0.2559
+  },
+  {
+   "model": "multilingual",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "user_asked_or_agreed",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.8956
+  },
+  {
+   "model": "multilingual",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "instructed_by_tool_output",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.9737
+  },
+  {
+   "model": "multilingual",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "within_grant",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.9769
+  },
+  {
+   "model": "multilingual",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "request_fulfilled",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.9347
+  },
+  {
+   "model": "multilingual",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "handed_off",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.9406
+  },
+  {
+   "model": "multilingual",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "left_undone",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.9502
+  },
+  {
+   "model": "multilingual",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "handoff_required",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.8636
+  },
+  {
+   "model": "multilingual",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "claims_supported",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.9063
+  },
+  {
+   "model": "multilingual",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "reports_unresolved",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.921
+  },
+  {
+   "model": "multilingual",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "expressed_satisfaction",
+   "kind": "score",
+   "pred": "3",
+   "ref": "2",
+   "ok": false,
+   "conf": 0.7863
+  },
+  {
+   "model": "multilingual",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "attribution",
+   "kind": "choice",
+   "pred": "agent_misuse",
+   "ref": "tool_or_service",
+   "ok": false,
+   "conf": 0.6988
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "user_asked_or_agreed",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.6591
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "instructed_by_tool_output",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5694
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "within_grant",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.6014
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "request_fulfilled",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5833
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "handed_off",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.6952
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "left_undone",
+   "kind": "noul",
+   "pred": "no",
+   "ref": "yes",
+   "ok": false,
+   "conf": 0.5492
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "handoff_required",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.602
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "claims_supported",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5801
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "reports_unresolved",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5387
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "expressed_satisfaction",
+   "kind": "score",
+   "pred": "4",
+   "ref": "2",
+   "ok": false,
+   "conf": 0.279
+  },
+  {
+   "model": "typed-decisions",
+   "wf": "agent_trace_observability",
+   "case": "trace_e2ab80ce644dc6a4d4ea02cfcffcccee",
+   "qid": "attribution",
+   "kind": "choice",
+   "pred": "agent_reasoning",
+   "ref": "tool_or_service",
+   "ok": false,
+   "conf": 0.2331
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_9222e1c90cfe97d34a6893f13889ff1d",
+   "qid": "instructed_by_tool_output",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.6042
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_9222e1c90cfe97d34a6893f13889ff1d",
+   "qid": "user_asked_or_agreed",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5722
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_9222e1c90cfe97d34a6893f13889ff1d",
+   "qid": "within_grant",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.639
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_9222e1c90cfe97d34a6893f13889ff1d",
+   "qid": "request_fulfilled",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "yes",
+   "ok": true,
+   "conf": 0.5365
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_9222e1c90cfe97d34a6893f13889ff1d",
+   "qid": "handed_off",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5915
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_9222e1c90cfe97d34a6893f13889ff1d",
+   "qid": "claims_supported",
+   "kind": "noul",
+   "pred": "no",
+   "ref": "yes",
+   "ok": false,
+   "conf": 0.6006
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_9222e1c90cfe97d34a6893f13889ff1d",
+   "qid": "handoff_required",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5232
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_9222e1c90cfe97d34a6893f13889ff1d",
+   "qid": "left_undone",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5751
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_9222e1c90cfe97d34a6893f13889ff1d",
+   "qid": "reports_unresolved",
+   "kind": "noul",
+   "pred": "yes",
+   "ref": "no",
+   "ok": false,
+   "conf": 0.5367
+  },
+  {
+   "model": "english",
+   "wf": "agent_trace_observability",
+   "case": "trace_9222e1c90cfe97d34a6893f13889ff1d",
+   "qid": "expressed_satisfaction",
+   "kind": "score",
+   "pred": "1",
+   "ref": "4",
+   "ok": false,
+   "conf": 0.3288
+  }
+ ]
+}

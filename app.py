@@ -13,6 +13,7 @@ from typing import Any
 
 import torch
 from fastapi import Depends, FastAPI, Header, HTTPException, Response
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from laya import Router
@@ -71,6 +72,15 @@ app = FastAPI(
         "{model, answers, usage, latency_ms}."
     ),
     version="3.0.0",
+)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
