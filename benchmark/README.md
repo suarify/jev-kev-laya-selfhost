@@ -1,50 +1,33 @@
-# Laya vs Kev benchmark
+# Benchmark & Kaggle tooling
 
-Side-by-side curl-style test suite: same inputs → both servers → agreement report.
+Self-hosted decision models and the notebooks to run them on a Kaggle GPU behind a Cloudflare tunnel.
 
-📊 **Latest full-run results → [REPORT.md](./REPORT.md)** (8/8 structure, 6/8 choice, 7/8 score, 12/16 noul)
+| File | What it is |
+|---|---|
+| `kaggle_laya.py` | Run our **Laya** wrapper on Kaggle GPU (direct `Router.predict` + optional FastAPI) |
+| `jevk5_adapter.py` | CORS + format adapter (Kev/Laya `options`/`levels` → JevK5 `criteria`) for serving JevK5 |
+| `kaggle_jevk5_run.ipynb` | ✅ **Current JevK5 recipe** — install → server → adapter → tunnel (v5) |
+| `kaggle_jevk5_simple.ipynb` | Minimal JevK5-only server + tunnel (no adapter) |
+| `kaggle_jevk5_v5.ipynb` | Clean JevK5 v5 (graphs OFF + fast kernels + adapter + 2 tunnels) |
+| `build_kaggle_*.py` | Builders that regenerate the `.ipynb` files |
 
-## Cases
+## Quick path to a public JevK5 API (Kaggle, GPU T4, Internet ON)
 
-8 cases, 2 per language, each exercising `choice` + `noul` + `score` questions:
+1. Run `kaggle_jevk5_v5.ipynb` top-to-bottom.
+2. Last cell prints `RAW_JEVK5_URL` (:8090, native `criteria`) and `ADAPTER_URL` (:8080, accepts `options`/`levels` + CORS for `localhost:5178`).
+3. Point your client at `{ADAPTER_URL}/v1/systemone`.
 
-| Case | Lang | Use case |
-|---|---|---|
-| `en-support-mixed` | English | Support ticket: route / escalate / threat / frustration |
-| `en-inbox-triage` | English | Email triage: label / priority / 2 nouls |
-| `zh-support-refund` | 中文 | Refund + duplicate charge, consumer-council threat |
-| `zh-content-moderation` | 中文 | Abusive post: toxicity / public-shaming / action |
-| `ms-support-delivery` | Bahasa Malaysia | Delivery + double charge, KPDN complaint threat |
-| `ms-whatsapp-appointment` | Bahasa Malaysia | Clinic reschedule: intent / urgency / politeness |
-| `ta-support-refund` | தமிழ் | Refund + late order, consumer forum threat |
-| `ta-booking-triage` | தமிழ் | Train reschedule: intent / urgency / complexity |
-
-Non-English cases use **native-language instructions and criteria labels** — question ids stay stable so agreement can be computed across models.
-
-## Run
-
-```powershell
-# both servers up (Laya :8000, Kev :8009)
-.\benchmark\run.ps1
-
-# one language
-.\benchmark\run.ps1 -Lang zh,ta
-
-# specific case
-.\benchmark\run.ps1 -Id ta-support-refund
-
-# CI-style: exit 1 on any choice disagreement or transport error
-.\benchmark\run.ps1 -FailOnDiff
+```bash
+curl -X POST "{ADAPTER_URL}/v1/systemone" \
+  -H "Content-Type: application/json" \
+  -d '{"state": "Double charged, wants refund",
+       "questions": {"department": {"type": "choice", "instructions": "Route",
+                                     "options": ["billing", "shipping", "returns"]}}}'
 ```
 
-## What is compared
+Sessions and tunnels are temporary (~12h) — for training/testing only.
 
-| Check | Criterion |
-|---|---|
-| Structure | Envelope keys equal (Laya's extra `routing` ignored) |
-| `choice` | Exact SAME / DIFF on picked answer |
-| `score` | CLOSE if \|gap\| < 0.50 (0–N scale) |
-| `noul` | CLOSE if \|gap\| < 0.30 |
-| Types | `choice`/`noul`/`score` present and equal per question id |
+## Model format notes
 
-Inherent (accepted) differences: `routing` block only on Laya, `usage.output_tokens` always 0 on Laya, Laya requires an API key.
+- **JevK5 native:** `criteria` (dict or list) — server rejects `options`/`levels`.
+- **Kev/Laya format:** `options` / `levels` — the **adapter** maps these to `criteria`, so the same payload works for all three.

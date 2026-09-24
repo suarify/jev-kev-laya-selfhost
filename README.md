@@ -33,8 +33,7 @@ curl -X POST http://localhost:8000/v1/decide \
 |---|---|
 | **[API.md](./API.md)** | Full setup guide, request/response format, question-type use cases, **Caddy & nginx deployment to your own URL** |
 | **[SKILL.md](./SKILL.md)** | Agent skill — drop into `~/.config/opencode/skills/laya-api/` or `.claude/skills/laya-api/` so coding agents can call this API |
-| **[benchmark/REPORT.md](./benchmark/REPORT.md)** | 📊 8-case parity report (EN / 中文 / Bahasa Malaysia / தமிழ்) — Laya vs Kev |
-| **[benchmark/README.md](./benchmark/README.md)** | How to run the benchmark suite (`run.ps1`, `-Lang`, `-FailOnDiff`) |
+| **[benchmark/README.md](./benchmark/README.md)** | Kaggle tooling — run Laya or JevK5 on a GPU behind a Cloudflare tunnel |
 
 ### Endpoints
 
@@ -60,24 +59,21 @@ All three batch into a single forward pass — add more questions, latency barel
 
 ---
 
-## Benchmarks & comparisons
+## Kaggle tooling
 
-Everything lives in [`benchmark/`](./benchmark/) — same inputs → side-by-side models → agreement report.
+Run Laya or [JevK5](https://github.com/allebee/jevk5) on a free Kaggle GPU and expose them via a Cloudflare Quick Tunnel. See [`benchmark/README.md`](./benchmark/README.md).
 
-| Suite | Models | What it shows |
-|---|---|---|
-| [`run.ps1`](./benchmark/run.ps1) + [`REPORT.md`](./benchmark/REPORT.md) | Laya vs [Kev](https://github.com/jaredpalmer/kev) | 8 cases × 4 languages (EN/ZH/MS/TA): **structure 8/8**, choice 6/8, score 7/8, noul 12/16 |
-| [`three_way_compare.py`](./benchmark/three_way_compare.py) | Laya + Kev + [System-One](https://github.com/mithalouni/system-one-open) | 3-way on the EN sample; System-One (L4 GPU) ≈ 100–260 ms vs local CPU seconds |
-| [`system_one_eval.py`](./benchmark/system_one_eval.py) | our 3 checkpoints (`english` / `multilingual` / `typed-decisions`) | TypeSafe public eval (20 cases / 372 pairs) following System-One's `evaluate.py` methodology — accuracy, ECE, latency, cost @ Jev's $0.042/M |
-| [`build_typesafe_eval.py`](./benchmark/build_typesafe_eval.py) | — | Rebuilds the TypeSafe eval set locally from `evals.typesafe.ai` (no Modal) |
-
-**System-One** ([mithalouni/system-one-open](https://github.com/mithalouni/system-one-open), MIT) is an open Jev-style replica (Gemma 4 E2B + attention LoRA). Their code runs on CPU (`S1_GPU=none`), but their trained weights live on *their* Modal volume — HF upload pending — so today you can (a) call their live Modal endpoint, or (b) train your own from the repo with downloadable base weights (`google/gemma-4-E2B-it` / `gemma-3-270m-it`). Our clone sits in [`system-one/`](./system-one/).
+| File | What it does |
+|---|---|
+| [`benchmark/kaggle_jevk5_v5.ipynb`](./benchmark/kaggle_jevk5_v5.ipynb) | ✅ JevK5 end-to-end: install → server → CORS/format adapter → tunnel (current recipe) |
+| [`benchmark/jevk5_adapter.py`](./benchmark/jevk5_adapter.py) | Adapter: accepts Kev/Laya `options`/`levels` → JevK5 `criteria`, CORS for `localhost:5178` |
+| [`benchmark/kaggle_laya.py`](./benchmark/kaggle_laya.py) | Our Laya wrapper on Kaggle GPU (`Router.predict` + optional FastAPI) |
 
 ---
 
 ## Related useful links
 
-- 🏗️ [**system-one-open**](https://github.com/mithalouni/system-one-open) — open Jev replica we benchmark against (MIT); methodology source for our TypeSafe eval runner
+- 🏗️ [**jevk5**](https://github.com/allebee/jevk5) — open-weight Jev alternative (Qwen3.5-4B + LoRA) we run on Kaggle
 - 📊 [**Jev model benchmarks**](https://benchmarkheaven.com/jev-models) — benchmarkheaven leaderboard comparing Jev-class System 1 decision models
 - 🎯 [**Benchmark artifact (Claude)**](https://claude.ai/artifact/9HPcmXJPaKWdYAJedgN1uf) — interactive benchmark artifact with results
 - 🌐 [**layaForWeb**](https://github.com/vishalmysore/layaForWeb) — unofficial browser port (ONNX Runtime Web) — run Laya client-side with no server, by [vishalmysore](https://github.com/vishalmysore)
@@ -88,5 +84,4 @@ Everything lives in [`benchmark/`](./benchmark/) — same inputs → side-by-sid
 
 - Model: **[convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya)** (Apache-2.0) by ConvAI Innovations — built on ModernBERT-large (Answer.AI & LightOn)
 - This repo: Docker + FastAPI wrapper only; please credit the original authors when you share deployments
-- `system-one/` clone: **[mithalouni/system-one-open](https://github.com/mithalouni/system-one-open)** (MIT) — used for eval methodology and 3-way comparison
 - `layaForWeb` is an unofficial port, not affiliated with ConvAI Innovations
