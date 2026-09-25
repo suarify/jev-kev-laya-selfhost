@@ -49,6 +49,33 @@ curl -X POST http://localhost:8000/v1/decide \
 
 Responses are `{model, answers, usage, latency_ms}` + `routing` (Laya extra), with an `x-typesafe-request-id` header — same shapes as [jaredpalmer/kev](https://github.com/jaredpalmer/kev).
 
+### Sample requests
+
+**Laya — `POST http://127.0.0.1:8000/v1/systemone`** (API key required)
+```bash
+curl -X POST http://127.0.0.1:8000/v1/systemone \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer sk-laya-super-9f4a7c2e-ops-primary" \
+  -d '{"state":"Double charged for order #4821, wants refund today or we cancel",
+       "questions":{
+         "department": {"type":"choice","instructions":"Route the ticket","criteria":["billing","shipping","returns"]},
+         "escalate":   {"type":"noul","instructions":"Needs human escalation?"},
+         "frustration":{"type":"score","instructions":"Customer tone","criteria":["calm","frustrated","very angry"]}}}'
+```
+
+**Kev — `POST http://127.0.0.1:8009/v1/systemone`** (no auth, `options`/`levels` form)
+```bash
+curl -X POST http://127.0.0.1:8009/v1/systemone \
+  -H "Content-Type: application/json" \
+  -d '{"state":"Double charged for order #4821, wants refund today or we cancel",
+       "questions":{
+         "department": {"type":"choice","instructions":"Route the ticket","options":["billing","shipping","returns"]},
+         "escalate":   {"type":"noul","instructions":"Needs human escalation?"},
+         "frustration":{"type":"score","instructions":"Customer tone","levels":["calm","frustrated","very angry"]}}}'
+```
+
+> Use `127.0.0.1`, not `localhost` (this host resolves `localhost` to `::1`, which the servers don't bind).
+
 ### Question types
 
 - **`choice`** → label + full probability distribution + confidence — routing, classification, triage
