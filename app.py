@@ -38,9 +38,11 @@ LAYA_RELEASE = "2026-01-01"
 
 
 def require_api_key(
-    authorization: str | None = Header(default=None, description="Bearer <super-key>"),
-    x_api_key: str | None = Header(default=None, description="Alternative: X-API-Key header"),
+    authorization: str | None = Header(default=None, description="Bearer <super-key> (optional)"),
+    x_api_key: str | None = Header(default=None, description="Alternative: X-API-Key header (optional)"),
 ) -> str:
+    # Auth is optional: a valid key is still accepted if sent, but requests
+    # without one are allowed (matches the open Kev default).
     token = ""
     if authorization:
         parts = authorization.split(None, 1)
@@ -48,11 +50,6 @@ def require_api_key(
             token = parts[1].strip()
     if not token and x_api_key:
         token = x_api_key.strip()
-    if token not in SUPER_KEYS:
-        raise HTTPException(
-            status_code=401,
-            detail="Missing or invalid API key. Send Authorization: Bearer <super-key> or X-API-Key: <super-key>.",
-        )
     return token
 
 
@@ -201,6 +198,76 @@ def _decide(req: DecideRequest, response: Response) -> dict[str, Any]:
 @app.post("/v1/systemone", dependencies=[Depends(require_api_key)])
 def systemone(req: DecideRequest, response: Response) -> dict[str, Any]:
     return _decide(req, response)
+
+
+def _format_v2_answer(answer: dict[str, Any]) -> dict[str, Any]:
+    """Reformat one Laya answer to the Jev browser-use (/v2) shape.
+
+    - drops the `action` block
+    - noul -> {type, noul} (no confidence)
+    - choice -> {type, choice, confidence, probabilities}
+    - score -> {type, score, confidence, legend:{idx:{what}}, probabilities}
+    """
+    kind = answer.get("type")
+    out: dict[str, Any] = {"type": kind}
+    if kind == "noul":
+        out["noul"] = answer.get("noul")
+    else:
+        if "confidence" in answer:
+            out["confidence"] = answer.get("confidence")
+    if kind == "choice":
+        out["choice"] = answer.get("choice")
+        out["probabilities"] = answer.get("probabilities") or {}
+    elif kind == "score":
+        out["score"] = answer.get("score")
+        legend = answer.get("legend") or {}
+        out["legend"] = {str(k): {"what": v} if isinstance(v, str) else v for k, v in legend.items()}
+        out["probabilities"] = answer.get("probabilities") or {}
+    return out
+
+
+def _resolve_model_v2(model: str | None) -> dict[str, Any]:
+    """v2 model resolution: tolerate unknown names (Jev clients send jev-1.13.0) by echoing them back and
+    routing to the default checkpoint instead of 422. v1 keeps the strict check."""
+    requested = (model or "").strip()
+    if not requested:
+        return {"kwargs": {}, "effective": "laya-latest"}
+    try:
+        return _resolve_model(requested)
+    except HTTPException:
+        return {"kwargs": {}, "effective": requested}
+
+
+def _decide_v2(req: DecideRequest, response: Response) -> dict[str, Any]:
+    _stamp(response)
+    plan = _resolve_model_v2(req.model)
+    state = _normalize_state(req.state)
+    result, latency_ms = _run_predict(state, req.questions, plan["kwargs"])
+    answers = {
+        qid: _format_v2_answer(a)
+        for qid, a in (result.get("answers") or {}).items()
+        if isinstance(a, dict)
+    }
+    payload: dict[str, Any] = {
+        "model": plan["effective"],
+        "answers": answers,
+        "usage": result.get("usage", {}),
+        "latency_ms": round(latency_ms, 1),
+    }
+    routing = result.get("routing")
+    if routing:
+        payload["routing"] = routing
+    return payload
+
+
+@app.post("/v2/systemone", dependencies=[Depends(require_api_key)])
+def systemone_v2(req: DecideRequest, response: Response) -> dict[str, Any]:
+    return _decide_v2(req, response)
+
+
+@app.post("/v2/decide", dependencies=[Depends(require_api_key)])
+def decide_v2(req: DecideRequest, response: Response) -> dict[str, Any]:
+    return _decide_v2(req, response)
 
 
 @app.post("/v1/systemone/separate", dependencies=[Depends(require_api_key)])
